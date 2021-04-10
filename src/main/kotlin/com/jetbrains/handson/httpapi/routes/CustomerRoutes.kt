@@ -2,11 +2,18 @@ package com.jetbrains.handson.httpapi.routes
 
 import com.jetbrains.handson.httpapi.customer.Customer
 import com.jetbrains.handson.httpapi.customer.customerStorage
+import com.jetbrains.handson.httpapi.order.orderStorage
 import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
+
+fun Application.registerCustomerRoutes() {
+    routing {
+        customerRouting()
+    }
+}
 
 fun Route.customerRouting() {
     route("/customer") {
@@ -44,5 +51,16 @@ fun Route.customerRouting() {
                 call.respondText("Not found", status = HttpStatusCode.NotFound)
             }
         }
+    }
+}
+
+fun Route.getOrderRoute() {
+    get("/order/{id}") {
+        val id = call.parameters["id"] ?: return@get call.respondText("Bad Request", status = HttpStatusCode.BadRequest)
+        val order = orderStorage.find { it.number == id } ?: return@get call.respondText(
+            "Not found",
+            status = HttpStatusCode.NotFound
+        )
+        call.respond(order)
     }
 }
