@@ -53,14 +53,3 @@ fun Route.customerRouting() {
         }
     }
 }
-
-fun Route.getOrderRoute() {
-    get("/order/{id}") {
-        val id = call.parameters["id"] ?: return@get call.respondText("Bad Request", status = HttpStatusCode.BadRequest)
-        val order = orderStorage.find { it.number == id } ?: return@get call.respondText(
-            "Not found",
-            status = HttpStatusCode.NotFound
-        )
-        call.respond(order)
-    }
-}
